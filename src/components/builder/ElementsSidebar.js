@@ -25,6 +25,15 @@ const ElementsList = styled.div`
   padding: 10px 0;
 `;
 
+const InstructionText = styled.p`
+  font-size: 14px;
+  color: #666;
+  margin: 30px 0;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+`;
+
 const ElementItem = styled.div`
   padding: 12px;
   background-color: white;
@@ -92,8 +101,9 @@ const ElementsSidebar = () => {
   return (
     <SidebarContainer>
       <SidebarTitle>Elements</SidebarTitle>
+      
       <ElementsList>
-        {availableElements.map((element, index) => (
+        {availableElements.map((element) => (
           <ElementItem
             key={element.id}
             draggable="true"
@@ -104,6 +114,10 @@ const ElementsSidebar = () => {
           </ElementItem>
         ))}
       </ElementsList>
+      
+      <InstructionText>
+        ↑ Drag and drop elements onto the canvas to build your design
+      </InstructionText>
     </SidebarContainer>
   );
 };

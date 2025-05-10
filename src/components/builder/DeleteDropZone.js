@@ -16,7 +16,7 @@ const DropZoneContainer = styled.div`
   justify-content: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  z-index: 1000;
+  z-index: 100; /* Lower z-index so elements can be dropped on it */
   color: white;
   font-size: 16px;
   border: 2px dashed ${props => props.isActive ? 'white' : 'rgba(255, 255, 255, 0.5)'};
@@ -63,14 +63,36 @@ const DeleteDropZone = () => {
   
   const handleDrop = (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Stop event propagation
     setIsActive(false);
     
     try {
-      const data = e.dataTransfer.getData('text/plain');
-      const elementData = JSON.parse(data);
+      // Try to get the data from dataTransfer
+      const data = e.dataTransfer.getData('application/json');
+      console.log('Drop data received:', data);
+      
+      if (!data) {
+        console.error('No data received in drop event');
+        return;
+      }
+      
+      // Try to parse the data
+      let elementData;
+      try {
+        elementData = JSON.parse(data);
+      } catch (parseErr) {
+        console.error('Error parsing JSON:', parseErr);
+        // If parsing fails, check if we have a direct ID
+        if (data && typeof data === 'string') {
+          elementData = { id: data };
+        }
+      }
+      
+      console.log('Parsed element data:', elementData);
       
       if (elementData && elementData.id) {
         // Remove the element
+        console.log('Removing element with ID:', elementData.id);
         removeElement(elementData.id);
         
         // Show feedback
@@ -78,13 +100,15 @@ const DeleteDropZone = () => {
         feedback.textContent = 'Element deleted';
         feedback.style.position = 'fixed';
         feedback.style.bottom = '90px';
-        feedback.style.right = '20px';
+        feedback.style.left = '50%';
+        feedback.style.transform = 'translateX(-50%)';
         feedback.style.padding = '8px 16px';
         feedback.style.backgroundColor = '#333';
         feedback.style.color = 'white';
         feedback.style.borderRadius = '4px';
         feedback.style.opacity = '0';
         feedback.style.transition = 'opacity 0.3s ease';
+        feedback.style.zIndex = '9999';
         
         document.body.appendChild(feedback);
         
@@ -100,9 +124,11 @@ const DeleteDropZone = () => {
             }, 300);
           }, 1500);
         }, 10);
+      } else {
+        console.error('No valid element ID found in drop data');
       }
     } catch (err) {
-      console.error('Error parsing dropped element data for deletion:', err);
+      console.error('Error handling dropped element:', err);
     }
   };
   

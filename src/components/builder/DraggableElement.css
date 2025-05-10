@@ -1,0 +1,170 @@
+/* Resize handle styles for react-rnd */
+.resize-handle {
+  position: absolute !important;
+  width: 10px !important;
+  height: 10px !important;
+  background-color: #2196F3 !important;
+  border: 2px solid white !important;
+  border-radius: 50% !important;
+  opacity: 0;
+  transition: all 0.2s ease !important;
+  z-index: 10 !important;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Blue glow effect on hover */
+.resize-handle:hover {
+  transform: scale(1.3) !important;
+  background-color: #1976D2 !important;
+  box-shadow: 0 0 8px #2196F3, 0 0 12px rgba(33, 150, 243, 0.6) !important;
+}
+
+/* Darker blue when active/dragging */
+.resize-handle:active {
+  transform: scale(1.2) !important;
+  background-color: #0D47A1 !important;
+  box-shadow: 0 0 10px #0D47A1, 0 0 14px rgba(13, 71, 161, 0.7) !important;
+}
+
+.draggable-element:hover .resize-handle,
+.draggable-element.selected .resize-handle {
+  opacity: 1;
+}
+
+/* Corner resize handles - slightly larger than edge handles */
+.resize-handle.top-left,
+.resize-handle.top-right,
+.resize-handle.bottom-left,
+.resize-handle.bottom-right {
+  width: 12px;
+  height: 12px;
+  background-color: #2196F3;
+}
+
+.resize-handle.top-left {
+  top: -7px;
+  left: -7px;
+  cursor: nwse-resize;
+  opacity: 0 !important; /* Hide corner handles by default */
+}
+
+.resize-handle.top-right {
+  top: -7px;
+  right: -7px;
+  cursor: nesw-resize;
+  opacity: 0 !important; /* Hide corner handles by default */
+}
+
+.resize-handle.bottom-left {
+  bottom: -7px;
+  left: -7px;
+  cursor: nesw-resize;
+  opacity: 0 !important; /* Hide corner handles by default */
+}
+
+.resize-handle.bottom-right {
+  bottom: -7px;
+  right: -7px;
+  cursor: nwse-resize;
+  opacity: 0 !important; /* Hide corner handles by default */
+}
+
+/* Single direction resize handles - dots in the middle of each edge */
+.resize-handle.top,
+.resize-handle.bottom,
+.resize-handle.left,
+.resize-handle.right {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background-color: #2196F3 !important;
+  border: 2px solid white !important;
+}
+
+.resize-handle.top {
+  top: -6px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  cursor: ns-resize !important;
+}
+
+.resize-handle.top:hover {
+  transform: translateX(-50%) scale(1.3) !important;
+}
+
+.resize-handle.top:active {
+  transform: translateX(-50%) scale(1.2) !important;
+}
+
+.resize-handle.right {
+  right: -6px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  cursor: ew-resize !important;
+}
+
+.resize-handle.right:hover {
+  transform: translateY(-50%) scale(1.3) !important;
+}
+
+.resize-handle.right:active {
+  transform: translateY(-50%) scale(1.2) !important;
+}
+
+.resize-handle.bottom {
+  bottom: -6px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  cursor: ns-resize !important;
+}
+
+.resize-handle.bottom:hover {
+  transform: translateX(-50%) scale(1.3) !important;
+}
+
+.resize-handle.bottom:active {
+  transform: translateX(-50%) scale(1.2) !important;
+}
+
+.resize-handle.left {
+  left: -6px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  cursor: ew-resize !important;
+}
+
+.resize-handle.left:hover {
+  transform: translateY(-50%) scale(1.3) !important;
+}
+
+.resize-handle.left:active {
+  transform: translateY(-50%) scale(1.2) !important;
+}
+
+/* Selected element styling */
+.draggable-element.selected {
+  box-shadow: 0 0 0 2px #2196F3, 0 0 10px rgba(33, 150, 243, 0.3);
+  z-index: 100 !important;
+  outline: 1px dashed #2196F3;
+  outline-offset: 1px;
+}
+
+/* Dragging element styling */
+.draggable-element.dragging {
+  opacity: 0.85;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  z-index: 101 !important;
+  transform: scale(1.02);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Add a subtle animation for the selected element */
+@keyframes pulse-border {
+  0% { outline-color: rgba(33, 150, 243, 0.7); }
+  50% { outline-color: rgba(33, 150, 243, 1); }
+  100% { outline-color: rgba(33, 150, 243, 0.7); }
+}
+
+.draggable-element.selected {
+  animation: pulse-border 2s infinite ease-in-out;
+}

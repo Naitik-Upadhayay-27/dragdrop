@@ -21,6 +21,7 @@ const BuilderContent = styled.div`
 `;
 
 const WebsiteBuilder = () => {
+  const { showPropertiesPanel } = useBuilderContext();
   const [previewMode, setPreviewMode] = useState(false);
   const [previewDevice, setPreviewDevice] = useState('desktop');
   const canvasRef = useRef(null);

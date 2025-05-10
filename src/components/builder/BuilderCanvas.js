@@ -20,8 +20,10 @@ const CanvasContent = styled.div`
   position: relative;
   min-height: 100%;
   min-width: 100%;
-  height: ${props => props.height || '1200px'};
+  height: ${props => props.height || '2000px'};
   width: ${props => props.width || '100%'};
+  /* Add padding to ensure elements can be placed at the bottom */
+  padding-bottom: 200px;
 `;
 
 const BackgroundContainer = styled.div`
@@ -41,7 +43,7 @@ const BackgroundContainer = styled.div`
 // Removed unused components
 
 const BuilderCanvas = () => {
-  const { elements, addElement, availableElements, selectedElement, setSelectedElement } = useBuilderContext();
+  const { elements, addElement, availableElements, selectedElement, selectElement, deselectElement } = useBuilderContext();
   const canvasRef = useRef(null);
   
   // Separate background elements from other elements
@@ -127,10 +129,16 @@ const BuilderCanvas = () => {
       const elementData = JSON.parse(data);
       if (elementData && elementData.type) {
         const rect = canvasRef.current.getBoundingClientRect();
+        
+        // Calculate position relative to canvas with scroll offset
         const position = {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
+          x: e.clientX - rect.left + canvasRef.current.scrollLeft,
+          y: e.clientY - rect.top + canvasRef.current.scrollTop
         };
+        
+        // Ensure position is within canvas boundaries
+        position.x = Math.max(0, position.x);
+        position.y = Math.max(0, position.y);
         
         // Find the element template
         const elementTemplate = availableElements.find(el => el.type === elementData.type);
@@ -146,11 +154,8 @@ const BuilderCanvas = () => {
             }
           };
           
-          // Log for debugging
-          console.log('Adding element with content:', mergedElement.content);
-          
           // Add the element at the drop position
-          addElement(mergedElement, position);
+          const newElement = addElement(mergedElement, position);
         }
       }
     } catch (err) {
@@ -180,18 +185,29 @@ const BuilderCanvas = () => {
   // Check if background is selected
   const isBackgroundSelected = selectedElement && selectedElement.type === 'background';
   
-  // Handle background click to select it
+  // Handle canvas click
   const handleCanvasClick = (e) => {
-    // If clicking directly on the canvas (not on an element), select the background if it exists
-    if (e.target === canvasRef.current && backgroundElements.length > 0) {
-      setSelectedElement(backgroundElements[0]);
+    // Check if we're clicking on the canvas container or canvas content
+    // and not on a child element (like a draggable element)
+    const isCanvasClick = e.target === canvasRef.current || 
+                          e.target.classList.contains('canvas-container') ||
+                          e.target.classList.contains('canvas-content');
+    
+    if (isCanvasClick) {
+      if (backgroundElements.length > 0) {
+        // If there's a background, select it
+        selectElement(backgroundElements[0]);
+      } else {
+        // If no background, deselect current element but keep properties panel open
+        deselectElement();
+      }
     }
   };
   
   return (
     <>
-      <CanvasContainer>
-        <CanvasContent ref={canvasRef} onClick={handleCanvasClick}>
+      <CanvasContainer className="canvas-container" onClick={handleCanvasClick}>
+        <CanvasContent className="canvas-content" ref={canvasRef}>
         {/* Background container */}
         {backgroundElements.length > 0 && (
           <BackgroundContainer 
@@ -200,7 +216,7 @@ const BuilderCanvas = () => {
             onClick={(e) => {
               e.stopPropagation();
               if (backgroundElements.length > 0) {
-                setSelectedElement(backgroundElements[0]);
+                selectElement(backgroundElements[0]);
               }
             }}
           >

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useBuilderContext } from '../../context/BuilderContext';
 import DraggableSampleImage from './DraggableSampleImage';
+import ImagePropertiesPanel from '../elements/ImagePropertiesPanel';
 
 const PanelContainer = styled.div`
   background-color: #f5f5f5;
@@ -191,7 +192,7 @@ const fontFamilies = [
 ];
 
 const PropertiesPanel = () => {
-  const { selectedElement, updateElement } = useBuilderContext();
+  const { selectedElement, updateElement, showPropertiesPanel } = useBuilderContext();
   const [showResizeHandles, setShowResizeHandles] = useState(false);
 
   const handleContentChange = (e) => {
@@ -319,103 +320,7 @@ const PropertiesPanel = () => {
         );
       
       case 'image':
-        return (
-          <>
-            <FormGroup>
-              <Label>Image Source</Label>
-              <Input
-                type="text"
-                value={selectedElement.content}
-                onChange={handleContentChange}
-                placeholder="Image URL"
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Sample Images</Label>
-              <OptionGrid>
-                {sampleImages.map((imageUrl, index) => (
-                  <DraggableSampleImage
-                    key={index}
-                    imageUrl={imageUrl}
-                    selected={selectedElement.content === imageUrl}
-                    onClick={() => handleImageSelect(imageUrl)}
-                  />
-                ))}
-              </OptionGrid>
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Resize Image</Label>
-              <button 
-                onClick={() => setShowResizeHandles(!showResizeHandles)}
-                style={{
-                  padding: '5px 10px',
-                  background: '#f0f0f0',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  marginTop: '5px'
-                }}
-              >
-                {showResizeHandles ? 'Hide Resize Options' : 'Show Resize Options'}
-              </button>
-              
-              {showResizeHandles && (
-                <ResizeHandlesContainer>
-                  <ResizeHandleOption>
-                    <label>Width:</label>
-                    <Input
-                      type="text"
-                      value={properties.width?.replace('px', '') || ''}
-                      onChange={(e) => handleResizeChange('width', e.target.value)}
-                      placeholder="Width in px"
-                    />
-                  </ResizeHandleOption>
-                  
-                  <ResizeHandleOption>
-                    <label>Height:</label>
-                    <Input
-                      type="text"
-                      value={properties.height?.replace('px', '') || ''}
-                      onChange={(e) => handleResizeChange('height', e.target.value)}
-                      placeholder="Height in px"
-                    />
-                  </ResizeHandleOption>
-                  
-                  <ResizeHandleOption>
-                    <label>Keep aspect ratio:</label>
-                    <input 
-                      type="checkbox" 
-                      checked={properties.keepAspectRatio || false}
-                      onChange={(e) => handlePropertyChange('keepAspectRatio', e.target.checked)}
-                    />
-                  </ResizeHandleOption>
-                </ResizeHandlesContainer>
-              )}
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Alt Text</Label>
-              <Input
-                type="text"
-                value={properties.alt}
-                onChange={(e) => handlePropertyChange('alt', e.target.value)}
-                placeholder="Image description"
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Border Radius</Label>
-              <Input
-                type="text"
-                value={properties.borderRadius || '0px'}
-                onChange={(e) => handlePropertyChange('borderRadius', e.target.value)}
-                placeholder="e.g., 5px, 50%"
-              />
-            </FormGroup>
-          </>
-        );
+        return <ImagePropertiesPanel element={selectedElement} />;
       
       case 'button':
         return (
@@ -734,7 +639,13 @@ const PropertiesPanel = () => {
         </>
       )}
       
-      {!selectedElement && (
+      {!selectedElement && showPropertiesPanel && (
+        <NoSelectionMessage>
+          Select an element or add a new element to edit its properties
+        </NoSelectionMessage>
+      )}
+      
+      {!selectedElement && !showPropertiesPanel && (
         <NoSelectionMessage>
           Select an element to edit its properties
         </NoSelectionMessage>

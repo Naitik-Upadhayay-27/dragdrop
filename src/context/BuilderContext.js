@@ -11,6 +11,9 @@ export const BuilderProvider = ({ children }) => {
   // State for the selected element
   const [selectedElement, setSelectedElement] = useState(null);
   
+  // State to control properties panel visibility independently from selection
+  const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
+  
   // State for template modal
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   
@@ -36,6 +39,7 @@ export const BuilderProvider = ({ children }) => {
     };
     setElements(prevElements => [...prevElements, newElement]);
     setSelectedElement(newElement);
+    setShowPropertiesPanel(true); // Show properties panel when adding a new element
     return newElement;
   };
   
@@ -46,7 +50,22 @@ export const BuilderProvider = ({ children }) => {
     // If the deleted element was selected, clear the selection
     if (selectedElement && selectedElement.id === id) {
       setSelectedElement(null);
+      // Keep properties panel open
     }
+  };
+  
+  // Custom function to handle element selection
+  const selectElement = (element) => {
+    setSelectedElement(element);
+    if (element) {
+      setShowPropertiesPanel(true);
+    }
+  };
+  
+  // Function to deselect element but keep properties panel open
+  const deselectElement = () => {
+    setSelectedElement(null);
+    // Properties panel remains open
   };
 
   // Update an element's properties
@@ -95,6 +114,26 @@ export const BuilderProvider = ({ children }) => {
     });
   };
   
+  // Resize an element with new dimensions and position
+  const resizeElement = (id, newSize, position) => {
+    setElements(prevElements => {
+      return prevElements.map(element => {
+        if (element.id === id) {
+          return { 
+            ...element, 
+            position,
+            properties: {
+              ...element.properties,
+              width: newSize.width,
+              height: newSize.height
+            }
+          };
+        }
+        return element;
+      });
+    });
+  };
+  
   // Get mouse position relative to canvas
   const getCanvasMousePosition = (e, canvasRef) => {
     if (!canvasRef.current) return { x: 0, y: 0 };
@@ -127,17 +166,22 @@ export const BuilderProvider = ({ children }) => {
     availableElements,
     isTemplateModalOpen,
     isTemplateSelectorOpen,
+    showPropertiesPanel,
     setSelectedElement,
     setElements,
+    setShowPropertiesPanel,
     addElement,
     updateElement,
     removeElement,
     updateElementPositions,
     moveElement,
+    resizeElement,
     getCanvasMousePosition,
     toggleTemplateModal,
     toggleTemplateSelector,
-    closeTemplateSelector
+    closeTemplateSelector,
+    selectElement,
+    deselectElement
   };
 
   return (
