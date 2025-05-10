@@ -14,85 +14,134 @@ export const BuilderProvider = ({ children }) => {
   // State for template modal
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   
-  // Available element types that can be dragged onto the canvas
+  // State for template selector
+  const [isTemplateSelectorOpen, setIsTemplateSelectorOpen] = useState(true); // Open by default
+  
+  // Available element types that can be added to the canvas
   const availableElements = [
-    { id: 'text', type: 'text', label: 'Text', content: 'Add your text here', properties: { fontSize: '16px', color: '#000000', fontWeight: 'normal' } },
-    { id: 'image', type: 'image', label: 'Image', content: 'https://via.placeholder.com/150', properties: { width: '150px', height: '150px', alt: 'Image' } },
+    { id: 'text', type: 'text', label: 'Text', content: 'Text Element', properties: { fontSize: '16px', color: '#000000' } },
+    { id: 'image', type: 'image', label: 'Image', content: 'https://source.unsplash.com/random/300x200', properties: { width: '300px', height: '200px', alt: 'Image' } },
     { id: 'button', type: 'button', label: 'Button', content: 'Click Me', properties: { backgroundColor: '#4CAF50', color: 'white', padding: '10px 20px', borderRadius: '4px' } },
     { id: 'heading', type: 'heading', label: 'Heading', content: 'Heading', properties: { fontSize: '24px', color: '#000000', fontWeight: 'bold' } },
     { id: 'paragraph', type: 'paragraph', label: 'Paragraph', content: 'This is a paragraph of text that can be edited.', properties: { fontSize: '16px', color: '#000000', lineHeight: '1.5' } },
+    { id: 'background', type: 'background', label: 'Background', content: '', properties: { width: '100%', height: '300px', backgroundColor: '#f5f5f5', backgroundImage: '', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', zIndex: '-1', opacity: '1', overlayColor: 'rgba(0,0,0,0)', overlayOpacity: '0', blur: '0px', grayscale: '0%', sepia: '0%', hueRotate: '0deg', contrast: '100%', brightness: '100%' } },
   ];
 
   // Add a new element to the canvas
-  const addElement = (element) => {
+  const addElement = (element, position = null) => {
     const newElement = {
       ...element,
       id: `${element.type}-${Date.now()}`,
-      position: { x: 0, y: 0 }
+      position: position || { x: 0, y: 0 }
     };
-    setElements([...elements, newElement]);
+    setElements(prevElements => [...prevElements, newElement]);
     setSelectedElement(newElement);
+    return newElement;
   };
-
-  // Update an element's properties
-  const updateElement = (id, updates) => {
-    setElements(
-      elements.map(element => 
-        element.id === id ? { ...element, ...updates } : element
-      )
-    );
-  };
-
+  
   // Remove an element from the canvas
   const removeElement = (id) => {
-    setElements(elements.filter(element => element.id !== id));
+    setElements(prevElements => prevElements.filter(el => el.id !== id));
+    
+    // If the deleted element was selected, clear the selection
     if (selectedElement && selectedElement.id === id) {
       setSelectedElement(null);
     }
   };
 
+  // Update an element's properties
+  const updateElement = (id, updates) => {
+    setElements(prevElements => {
+      return prevElements.map(element => {
+        if (element.id === id) {
+          return { ...element, ...updates };
+        }
+        return element;
+      });
+    });
+    
+    // If the selected element is being updated, update it in the state as well
+    if (selectedElement && selectedElement.id === id) {
+      setSelectedElement(prev => ({ ...prev, ...updates }));
+    }
+  };
+
+  // This function was redefined above with more functionality
+
   // Update element positions after drag
   const updateElementPositions = (result) => {
     if (!result.destination) return;
     
-    const items = Array.from(elements);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    
-    setElements(items);
+    // If dragging within the canvas, just reorder
+    if (result.source.droppableId === 'builder-canvas' && 
+        result.destination.droppableId === 'builder-canvas') {
+      const items = Array.from(elements);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      
+      setElements(items);
+    }
   };
 
   // Move an element to a specific position on the canvas
   const moveElement = (id, position) => {
-    setElements(
-      elements.map(element => 
-        element.id === id ? { ...element, position } : element
-      )
-    );
+    setElements(prevElements => {
+      return prevElements.map(element => {
+        if (element.id === id) {
+          return { ...element, position };
+        }
+        return element;
+      });
+    });
+  };
+  
+  // Get mouse position relative to canvas
+  const getCanvasMousePosition = (e, canvasRef) => {
+    if (!canvasRef.current) return { x: 0, y: 0 };
+    
+    const rect = canvasRef.current.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
   };
 
   // Toggle template modal
   const toggleTemplateModal = () => {
     setIsTemplateModalOpen(!isTemplateModalOpen);
   };
+  
+  // Toggle template selector
+  const toggleTemplateSelector = () => {
+    setIsTemplateSelectorOpen(!isTemplateSelectorOpen);
+  };
+  
+  // Close template selector
+  const closeTemplateSelector = () => {
+    setIsTemplateSelectorOpen(false);
+  };
+
+  const contextValue = {
+    elements,
+    selectedElement,
+    availableElements,
+    isTemplateModalOpen,
+    isTemplateSelectorOpen,
+    setSelectedElement,
+    setElements,
+    addElement,
+    updateElement,
+    removeElement,
+    updateElementPositions,
+    moveElement,
+    getCanvasMousePosition,
+    toggleTemplateModal,
+    toggleTemplateSelector,
+    closeTemplateSelector
+  };
 
   return (
-    <BuilderContext.Provider
-      value={{
-        elements,
-        selectedElement,
-        availableElements,
-        isTemplateModalOpen,
-        setSelectedElement,
-        setElements,
-        addElement,
-        updateElement,
-        removeElement,
-        updateElementPositions,
-        moveElement,
-        toggleTemplateModal
-      }}
-    >
+    <BuilderContext.Provider value={contextValue}>
       {children}
     </BuilderContext.Provider>
   );

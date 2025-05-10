@@ -69,7 +69,7 @@ const DeviceButton = styled.button`
 `;
 
 const BuilderToolbar = ({ previewMode, togglePreviewMode, previewDevice, changePreviewDevice }) => {
-  const { toggleTemplateModal } = useBuilderContext();
+  const { toggleTemplateModal, toggleTemplateSelector } = useBuilderContext();
   
   const handleDeviceChange = (device) => {
     changePreviewDevice(device);
@@ -109,7 +109,8 @@ const BuilderToolbar = ({ previewMode, togglePreviewMode, previewDevice, changeP
         <Button onClick={togglePreviewMode}>
           {previewMode ? 'Edit Mode' : 'Preview'}
         </Button>
-        <Button onClick={toggleTemplateModal}>Templates</Button>
+        <Button onClick={toggleTemplateSelector}>Built-in Templates</Button>
+        <Button onClick={toggleTemplateModal}>My Templates</Button>
         <Button primary>Save</Button>
         <Button>Publish</Button>
       </ToolbarActions>

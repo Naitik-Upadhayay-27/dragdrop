@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { useBuilderContext } from '../../context/BuilderContext';
 
 const SidebarContainer = styled.div`
@@ -23,6 +22,7 @@ const ElementsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 10px 0;
 `;
 
 const ElementItem = styled.div`
@@ -33,6 +33,7 @@ const ElementItem = styled.div`
   cursor: grab;
   user-select: none;
   transition: all 0.2s;
+  position: relative;
   
   &:hover {
     background-color: #f0f0f0;
@@ -43,41 +44,66 @@ const ElementItem = styled.div`
   &:active {
     cursor: grabbing;
   }
+  
+  &.dragging {
+    opacity: 0.5;
+  }
 `;
 
 const ElementsSidebar = () => {
   const { availableElements } = useBuilderContext();
 
+  const handleDragStart = (e, element) => {
+    // Set the drag data to the element type
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      type: element.type,
+      id: element.id
+    }));
+    
+    // Set the drag effect
+    e.dataTransfer.effectAllowed = 'copy';
+    
+    // Add dragging class
+    e.currentTarget.classList.add('dragging');
+    
+    // Create a drag image (optional)
+    const dragImage = document.createElement('div');
+    dragImage.textContent = element.label;
+    dragImage.style.padding = '10px';
+    dragImage.style.background = '#fff';
+    dragImage.style.border = '1px solid #ddd';
+    dragImage.style.borderRadius = '4px';
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 0, 0);
+    
+    // Clean up the drag image after a short delay
+    setTimeout(() => {
+      document.body.removeChild(dragImage);
+    }, 100);
+  };
+
+  const handleDragEnd = (e) => {
+    // Remove dragging class
+    e.currentTarget.classList.remove('dragging');
+  };
+
   return (
     <SidebarContainer>
       <SidebarTitle>Elements</SidebarTitle>
-      <Droppable droppableId="elements-sidebar" isDropDisabled={true}>
-        {(provided) => (
-          <ElementsList
-            ref={provided.innerRef}
-            {...provided.droppableProps}
+      <ElementsList>
+        {availableElements.map((element, index) => (
+          <ElementItem
+            key={element.id}
+            draggable="true"
+            onDragStart={(e) => handleDragStart(e, element)}
+            onDragEnd={handleDragEnd}
           >
-            {availableElements.map((element, index) => (
-              <Draggable
-                key={element.id}
-                draggableId={element.id}
-                index={index}
-              >
-                {(provided) => (
-                  <ElementItem
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    {element.label}
-                  </ElementItem>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </ElementsList>
-        )}
-      </Droppable>
+            {element.label}
+          </ElementItem>
+        ))}
+      </ElementsList>
     </SidebarContainer>
   );
 };

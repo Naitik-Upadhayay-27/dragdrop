@@ -3,6 +3,7 @@ import './App.css';
 import { BuilderProvider, useBuilderContext } from './context/BuilderContext';
 import WebsiteBuilder from './components/builder/WebsiteBuilder';
 import TemplateModal from './components/builder/TemplateModal';
+import TemplateSelector from './components/builder/TemplateSelector';
 
 function App() {
   return (
@@ -15,12 +16,18 @@ function App() {
 }
 
 const AppContent = () => {
-  const { isTemplateModalOpen, toggleTemplateModal } = useBuilderContext();
+  const { 
+    isTemplateModalOpen, 
+    toggleTemplateModal, 
+    isTemplateSelectorOpen, 
+    closeTemplateSelector 
+  } = useBuilderContext();
   
   return (
     <>
       <WebsiteBuilder />
       <TemplateModal isOpen={isTemplateModalOpen} onClose={toggleTemplateModal} />
+      <TemplateSelector isOpen={isTemplateSelectorOpen} onClose={closeTemplateSelector} />
     </>
   );
 }
