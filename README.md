@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Websites.co.in Drag-and-Drop Website Builder
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A prototype of a drag-and-drop website builder for Websites.co.in that transforms the existing form-based approach into an interactive drag-and-drop interface.
 
 ## Available Scripts
 
