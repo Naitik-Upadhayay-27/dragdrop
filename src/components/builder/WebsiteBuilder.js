@@ -69,11 +69,26 @@ const WebsiteBuilder = () => {
     const bgElement = backgroundElements[0];
     const props = bgElement.properties || {};
     
-    // Force re-render by adding a timestamp to the image URL if it's a data URL
+    // Extract the actual image URL from the backgroundImage property
     let backgroundImageUrl = props.backgroundImage;
-    if (backgroundImageUrl && backgroundImageUrl.startsWith('data:')) {
-      // Add a cache-busting parameter for data URLs
-      backgroundImageUrl = `${backgroundImageUrl}#t=${Date.now()}`;
+    
+    // Handle both formats: direct URLs and url('...') format
+    if (backgroundImageUrl) {
+      // If it's in url(...) format, extract the URL
+      if (backgroundImageUrl.startsWith('url(') && backgroundImageUrl.endsWith(')')) {
+        backgroundImageUrl = backgroundImageUrl.substring(4, backgroundImageUrl.length - 1);
+        // Remove any quotes around the URL
+        if ((backgroundImageUrl.startsWith('\'') && backgroundImageUrl.endsWith('\'')) ||
+            (backgroundImageUrl.startsWith('"') && backgroundImageUrl.endsWith('"'))) {
+          backgroundImageUrl = backgroundImageUrl.substring(1, backgroundImageUrl.length - 1);
+        }
+      }
+      
+      // Force re-render by adding a timestamp to the image URL if it's a data URL
+      if (backgroundImageUrl.startsWith('data:')) {
+        // Add a cache-busting parameter for data URLs
+        backgroundImageUrl = `${backgroundImageUrl}#t=${Date.now()}`;
+      }
     }
     
     return `
