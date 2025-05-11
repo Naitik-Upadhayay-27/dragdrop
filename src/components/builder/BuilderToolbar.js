@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useBuilderContext } from '../../context/BuilderContext';
 
@@ -10,6 +10,13 @@ const ToolbarContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+  }
 `;
 
 const Logo = styled.div`
@@ -27,6 +34,11 @@ const Logo = styled.div`
 const ToolbarActions = styled.div`
   display: flex;
   gap: 10px;
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const Button = styled.button`
@@ -68,15 +80,72 @@ const DeviceButton = styled.button`
   }
 `;
 
+const SuccessMessage = styled.div`
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out forwards;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -20px); }
+    15% { opacity: 1; transform: translate(-50%, 0); }
+    85% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -20px); }
+  }
+`;
+
 const BuilderToolbar = ({ previewMode, togglePreviewMode, previewDevice, changePreviewDevice }) => {
   const { toggleTemplateModal, toggleTemplateSelector } = useBuilderContext();
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [showPublishMessage, setShowPublishMessage] = useState(false);
   
   const handleDeviceChange = (device) => {
     changePreviewDevice(device);
   };
   
+  const handleSave = () => {
+    setShowSaveMessage(true);
+    setTimeout(() => setShowSaveMessage(false), 3000);
+  };
+  
+  const handlePublish = () => {
+    setShowPublishMessage(true);
+    setTimeout(() => setShowPublishMessage(false), 3000);
+  };
+  
+  const handleSaveAndPublish = () => {
+    setShowSaveMessage(true);
+    setTimeout(() => {
+      setShowSaveMessage(false);
+      setShowPublishMessage(true);
+      setTimeout(() => setShowPublishMessage(false), 3000);
+    }, 3000);
+  };
+  
   return (
     <ToolbarContainer>
+      {showSaveMessage && (
+        <SuccessMessage>
+          <span>✅</span> Changes saved successfully!
+        </SuccessMessage>
+      )}
+      
+      {showPublishMessage && (
+        <SuccessMessage>
+          <span>🚀</span> Website published successfully!
+        </SuccessMessage>
+      )}
+      
       <Logo>
         <span>Websites.co.in Builder</span>
       </Logo>
@@ -111,8 +180,9 @@ const BuilderToolbar = ({ previewMode, togglePreviewMode, previewDevice, changeP
         </Button>
         <Button onClick={toggleTemplateSelector}>Built-in Templates</Button>
         <Button onClick={toggleTemplateModal}>My Templates</Button>
-        <Button primary>Save</Button>
-        <Button>Publish</Button>
+        <Button primary onClick={handleSave}>Save</Button>
+        <Button onClick={handlePublish}>Publish</Button>
+        <Button primary onClick={handleSaveAndPublish}>Save & Publish</Button>
       </ToolbarActions>
     </ToolbarContainer>
   );

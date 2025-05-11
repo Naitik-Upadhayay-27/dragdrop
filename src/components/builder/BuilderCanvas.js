@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useBuilderContext } from '../../context/BuilderContext';
 import EmptyCanvasGuide from './EmptyCanvasGuide';
@@ -6,13 +6,22 @@ import DraggableElement from './DraggableElement';
 import DeleteDropZone from './DeleteDropZone';
 
 const CanvasContainer = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0;
+  background-color: white;
   position: relative;
   min-height: 600px;
+  width: 1280px; /* Match desktop preview width */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+  padding: 0;
+  overflow: hidden;
+`;
+
+const CanvasInner = styled.div`
   padding: 20px;
+  height: 100%;
+  width: 100%;
   overflow: auto;
 `;
 
@@ -20,11 +29,28 @@ const CanvasContent = styled.div`
   position: relative;
   min-height: 100%;
   min-width: 100%;
-  height: ${props => props.height || '2000px'};
+  height: ${props => props.height || '600px'};
   width: ${props => props.width || '100%'};
   /* Add padding to ensure elements can be placed at the bottom */
   padding-bottom: 200px;
+  margin-left: ${props => props.marginLeft || '0px'};
+  margin-right: ${props => props.marginRight || '0px'};
+  margin-top: ${props => props.marginTop || '0px'};
+  margin-bottom: ${props => props.marginBottom || '0px'};
+  display: flex;
+  flex-direction: column;
+  align-items: ${props => {
+    switch(props.contentAlignment) {
+      case 'left': return 'flex-start';
+      case 'right': return 'flex-end';
+      case 'center': return 'center';
+      default: return 'flex-start';
+    }
+  }};
+  cursor: default;
 `;
+
+
 
 const BackgroundContainer = styled.div`
   position: absolute;
@@ -32,6 +58,8 @@ const BackgroundContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
+  height: 100%;
   z-index: 0;
   ${props => props.backgroundStyles}
   ${props => props.isSelected && `
@@ -43,12 +71,40 @@ const BackgroundContainer = styled.div`
 // Removed unused components
 
 const BuilderCanvas = () => {
-  const { elements, addElement, availableElements, selectedElement, selectElement, deselectElement } = useBuilderContext();
+  const { 
+    elements, 
+    addElement, 
+    availableElements, 
+    selectedElement, 
+    selectedElements,
+    selectElement, 
+    deselectElement
+  } = useBuilderContext();
   const canvasRef = useRef(null);
+  const [canvasHeight, setCanvasHeight] = useState('600px');
+  
+
+  
+  // Default canvas settings
+  const defaultCanvasSettings = {
+    marginLeft: '20px',
+    marginRight: '20px',
+    marginTop: '20px',
+    marginBottom: '20px',
+    canvasHeight: 'auto',
+    contentAlignment: 'center'
+  };
   
   // Separate background elements from other elements
   const backgroundElements = elements.filter(element => element.type === 'background');
   const regularElements = elements.filter(element => element.type !== 'background');
+  
+  // Force re-render when background elements change
+  const [forceUpdate, setForceUpdate] = useState(0);
+  useEffect(() => {
+    // Force a re-render when background elements change
+    setForceUpdate(prev => prev + 1);
+  }, [backgroundElements]);
   
   // Get the background styles from the first background element (if any)
   const getBackgroundStyles = () => {
@@ -58,9 +114,19 @@ const BuilderCanvas = () => {
     const bgElement = backgroundElements[0];
     const props = bgElement.properties || {};
     
+    // Force re-render by adding a timestamp to the image URL if it's a data URL
+    let backgroundImageUrl = props.backgroundImage;
+    if (backgroundImageUrl && backgroundImageUrl.startsWith('data:')) {
+      // Add a cache-busting parameter for data URLs
+      backgroundImageUrl = `${backgroundImageUrl}#t=${Date.now()}`;
+    }
+    
+    // Log the background properties to help with debugging
+    console.log('Background Properties:', props);
+    
     return `
       background-color: ${props.backgroundColor || '#f5f5f5'};
-      ${props.backgroundImage ? `background-image: url(${props.backgroundImage});` : ''}
+      ${backgroundImageUrl ? `background-image: url('${backgroundImageUrl}');` : ''}
       background-size: ${props.backgroundSize || 'cover'};
       background-position: ${props.backgroundPosition || 'center'};
       background-repeat: no-repeat !important;
@@ -75,51 +141,6 @@ const BuilderCanvas = () => {
     `;
   };
   
-  // Get overlay styles if there's a background with overlay
-  const getOverlayStyles = () => {
-    if (backgroundElements.length === 0) return null;
-    
-    const bgElement = backgroundElements[0];
-    const props = bgElement.properties || {};
-    
-    // Check if we have both overlay color and opacity
-    if (!props.overlayColor) return null;
-    
-    // Get opacity value - default to 0 if not set
-    const opacity = parseFloat(props.overlayOpacity || '0');
-    if (opacity <= 0) return null;
-    
-    // Extract the color components from the overlay color
-    let r = 0, g = 0, b = 0;
-    
-    // Handle different color formats
-    if (props.overlayColor.startsWith('#')) {
-      // Hex color
-      r = parseInt(props.overlayColor.slice(1, 3), 16);
-      g = parseInt(props.overlayColor.slice(3, 5), 16);
-      b = parseInt(props.overlayColor.slice(5, 7), 16);
-    } else if (props.overlayColor.startsWith('rgba')) {
-      // Already RGBA format - extract RGB values
-      const matches = props.overlayColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
-      if (matches) {
-        [, r, g, b] = matches.map(v => parseInt(v));
-      }
-    } else if (props.overlayColor.startsWith('rgb')) {
-      // RGB format - extract RGB values
-      const matches = props.overlayColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
-      if (matches) {
-        [, r, g, b] = matches.map(v => parseInt(v));
-      }
-    }
-    
-    // Create a new rgba color with the current opacity
-    return {
-      backgroundColor: `rgba(${r}, ${g}, ${b}, ${opacity})`
-    };
-  };
-  
-  const overlayStyles = getOverlayStyles();
-
   // Handle dropping elements from sidebar onto canvas
   const handleDrop = (e) => {
     e.preventDefault();
@@ -163,6 +184,72 @@ const BuilderCanvas = () => {
     }
   };
   
+  // Calculate the dynamic canvas height based on element positions
+  const calculateCanvasHeight = () => {
+    if (elements.length === 0) return '600px';
+    
+    // Find the bottom-most position of all elements
+    let maxBottom = 0;
+    
+    elements.forEach(element => {
+      if (!element.position) return;
+      
+      // Get the element's position
+      const { y } = element.position;
+      
+      // Get the element's height (default to 0 if not available)
+      let height = 0;
+      
+      if (element.properties) {
+        if (element.properties.height) {
+          // Remove 'px', '%', etc. and parse as integer
+          const heightStr = element.properties.height.toString();
+          height = parseInt(heightStr.replace(/[^0-9]/g, '')) || 0;
+        }
+      }
+      
+      // For elements without explicit height, use default values based on type
+      if (height === 0) {
+        switch (element.type) {
+          case 'text':
+          case 'paragraph':
+            height = 50; // Default height for text elements
+            break;
+          case 'heading':
+            height = 60; // Default height for headings
+            break;
+          case 'button':
+            height = 40; // Default height for buttons
+            break;
+          case 'image':
+            height = 200; // Default height for images
+            break;
+          default:
+            height = 100; // Default fallback height
+        }
+      }
+      
+      // Calculate the bottom position
+      const bottom = y + height;
+      
+      // Update maxBottom if this element is lower
+      if (bottom > maxBottom) {
+        maxBottom = bottom;
+      }
+    });
+    
+    // Add padding to ensure there's space below the last element
+    const heightWithPadding = maxBottom + 300;
+    
+    // Ensure minimum height of 600px
+    return Math.max(600, heightWithPadding) + 'px';
+  };
+  
+  // Update canvas height when elements change
+  useEffect(() => {
+    setCanvasHeight(calculateCanvasHeight());
+  }, [elements]);
+  
   // Set up drag and drop event handlers
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -185,6 +272,12 @@ const BuilderCanvas = () => {
   // Check if background is selected
   const isBackgroundSelected = selectedElement && selectedElement.type === 'background';
   
+
+  
+
+  
+
+  
   // Handle canvas click
   const handleCanvasClick = (e) => {
     // Check if we're clicking on the canvas container or canvas content
@@ -206,8 +299,19 @@ const BuilderCanvas = () => {
   
   return (
     <>
-      <CanvasContainer className="canvas-container" onClick={handleCanvasClick}>
-        <CanvasContent className="canvas-content" ref={canvasRef}>
+      <CanvasContainer className="canvas-container">
+        <CanvasInner onClick={handleCanvasClick}>
+          <CanvasContent 
+            className="canvas-content" 
+            ref={canvasRef} 
+            height={defaultCanvasSettings.canvasHeight === 'auto' ? canvasHeight : defaultCanvasSettings.canvasHeight}
+            marginLeft={defaultCanvasSettings.marginLeft}
+            marginRight={defaultCanvasSettings.marginRight}
+            marginTop={defaultCanvasSettings.marginTop}
+            marginBottom={defaultCanvasSettings.marginBottom}
+            contentAlignment={defaultCanvasSettings.contentAlignment}
+            onClick={handleCanvasClick}
+          >
         {/* Background container */}
         {backgroundElements.length > 0 && (
           <BackgroundContainer 
@@ -220,18 +324,7 @@ const BuilderCanvas = () => {
               }
             }}
           >
-            {/* Overlay for background */}
-            {overlayStyles && (
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: overlayStyles.backgroundColor,
-                pointerEvents: 'none'
-              }} />
-            )}
+            {/* Overlay functionality removed as requested */}
           </BackgroundContainer>
         )}
         
@@ -243,12 +336,16 @@ const BuilderCanvas = () => {
               key={element.id} 
               element={element} 
               index={index} 
+              isSelected={selectedElements.some(sel => sel.id === element.id)}
             />
           ))
         )}
         
+
+        
         {/* Background is now handled by the canvas itself */}
-      </CanvasContent>
+          </CanvasContent>
+        </CanvasInner>
       </CanvasContainer>
       <DeleteDropZone />
     </>

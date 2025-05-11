@@ -7,10 +7,19 @@ const StyledParagraph = styled.p`
   cursor: pointer;
   position: relative;
   margin: 0;
-  ${props => props.isSelected && `
-    outline: 2px solid #2196F3;
-  `}
+  width: ${props => props.properties?.width || '300px'}; /* Default width if not specified */
+  height: ${props => props.properties?.height || 'auto'}; /* Default height if not specified */
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 50px;
+  min-height: 50px;
+  overflow: visible;
+  word-wrap: break-word;
+  resize: both;
+  /* Remove the selected outline since DraggableElement already adds one */
   ${props => props.properties && Object.entries(props.properties).map(([key, value]) => {
+    // Skip width and height as they're handled separately above
+    if (key === 'width' || key === 'height') return '';
     // Convert camelCase to kebab-case for CSS properties
     const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
     return `${cssKey}: ${value};`;

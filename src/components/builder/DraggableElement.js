@@ -63,13 +63,19 @@ const StyledRnd = styled(Rnd)`
   z-index: ${props => props.isSelected ? 100 : 10};
 `;
 
-const DraggableElement = ({ element, index }) => {
-  const { removeElement, moveElement, updateElement, selectedElement, selectElement } = useBuilderContext();
+const DraggableElement = ({ element, index, isSelected }) => {
+  const { 
+    removeElement, 
+    moveElement, 
+    updateElement, 
+    selectedElement, 
+    selectedElements,
+    selectElement 
+  } = useBuilderContext();
   const elementRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   
-  // Check if this element is selected
-  const isSelected = selectedElement && selectedElement.id === element.id;
+  // isSelected is now passed as a prop from the parent component
   
   // Check if this is a background element
   const isBackground = element.type === 'background';
@@ -86,17 +92,27 @@ const DraggableElement = ({ element, index }) => {
   // Calculate size for the Rnd component
   const elementSize = getElementSize();
   
-  // Handle element click
+  // Handle element click with multi-selection support
   const handleElementClick = (e) => {
     e.stopPropagation();
-    selectElement(element);
+    // If shift or ctrl key is pressed, add to selection
+    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+      selectElement(element, true); // true for multi-select
+    } else {
+      selectElement(element); // regular single selection
+    }
   };
   
-  // Handle drag stop
+  // Handle drag stop with multi-selection support
   const handleDragStop = (e, data) => {
     // Update the element position in the context
     const newPosition = { x: data.x, y: data.y };
-    moveElement(element.id, newPosition);
+    
+    // Check if this element is part of a multi-selection
+    const isPartOfMultiSelection = selectedElements.length > 1 && selectedElements.some(el => el.id === element.id);
+    
+    // If part of multi-selection, move all selected elements together
+    moveElement(element.id, newPosition, isPartOfMultiSelection);
     
     // Force isDragging to false to ensure the element stops moving with the cursor
     setIsDragging(false);
@@ -133,12 +149,18 @@ const DraggableElement = ({ element, index }) => {
     if (isBackground) {
       // Background elements can only be resized vertically from the bottom
       return { bottom: true };
-    } else if (element.type === 'image' || element.type === 'text' || element.type === 'button') {
-      // Images, text, and buttons can be resized from all sides
+    } else if (
+      element.type === 'image' || 
+      element.type === 'text' || 
+      element.type === 'button' ||
+      element.type === 'heading' ||
+      element.type === 'paragraph'
+    ) {
+      // Images, text, headings, paragraphs, and buttons can be resized from all sides
       return { top: true, right: true, bottom: true, left: true };
     } else {
       // Other elements don't have resize handles
-      return {};
+      return { top: true, right: true, bottom: true, left: true }; // Default to all handles for all elements
     }
   };
   

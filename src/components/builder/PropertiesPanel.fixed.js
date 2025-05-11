@@ -20,17 +20,6 @@ const PanelContainer = styled.div`
   ${props => props.isNarrow && `
     padding: 10px 5px;
   `}
-  
-  @media (max-width: 768px) {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
-    z-index: 200;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-  }
 `;
 
 const ResizeHandle = styled.div`
@@ -253,16 +242,13 @@ const PropertiesPanel = () => {
   // Always declare hooks at the top level, before any conditional returns
   const [showResizeHandles, setShowResizeHandles] = useState(false);
   
-  // Check if we're on mobile
-  const isMobile = window.innerWidth <= 768;
-  
   // When panel is collapsed, show only the toggle button
   if (!propertiesPanelVisible) {
     return (
       <div style={{ 
         position: 'absolute', 
         right: 0, 
-        top: isMobile ? '50px' : 0, 
+        top: 0, 
         height: '100%',
         zIndex: 100 
       }}>
@@ -284,39 +270,36 @@ const PropertiesPanel = () => {
               title="Click to open Properties panel"
               style={{
                 position: 'relative',
-                width: '36px',
-                height: '36px',
-                backgroundColor: '#4CAF50',
-                border: 'none',
+                width: '28px',
+                height: '28px',
+                backgroundColor: '#f5f5f5',
+                border: '1px solid #ddd',
                 borderRight: 'none',
-                borderTopLeftRadius: '8px',
-                borderBottomLeftRadius: '8px',
+                borderTopLeftRadius: '4px',
+                borderBottomLeftRadius: '4px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'white',
-                fontSize: '18px',
+                color: '#666',
+                fontSize: '14px',
                 zIndex: 5,
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                transition: 'width 0.3s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.width = '44px';
-                e.currentTarget.style.backgroundColor = '#3e8e41';
+                e.currentTarget.style.width = '36px';
                 // Show tooltip
                 const tooltip = e.currentTarget.nextElementSibling;
                 if (tooltip) tooltip.style.opacity = '1';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.width = '36px';
-                e.currentTarget.style.backgroundColor = '#4CAF50';
+                e.currentTarget.style.width = '32px';
                 // Hide tooltip
                 const tooltip = e.currentTarget.nextElementSibling;
                 if (tooltip) tooltip.style.opacity = '0';
               }}
             >
-              <span style={{ marginLeft: '-2px', fontWeight: 'bold' }}>&lt;</span>
+              <span style={{ marginLeft: '-2px' }}>&lt;</span>
             </button>
             <div style={{
               background: 'rgba(0,0,0,0.7)',
@@ -379,7 +362,7 @@ const PropertiesPanel = () => {
   };
   
   // Handle property change with support for multi-selection
-  const handlePropertyChange = (propertyName, value, applyToAll = true) => {
+  const handlePropertyChange = (propertyName, value, applyToAll = false) => {
     if (!selectedElement) return;
     
     // Make a deep copy of the current properties
@@ -392,22 +375,15 @@ const PropertiesPanel = () => {
     if (process.env.NODE_ENV === 'development') {
       console.log('Current properties:', selectedElement.properties);
       console.log('Updated properties:', updatedProperties);
-      console.log('Selected elements count:', selectedElements.length);
+      if (applyToAll) {
+        console.log('Applying to all selected elements:', selectedElements.length);
+      }
     }
     
-    // Check if we have multiple elements selected
+    // Check if we should apply to all selected elements
     const hasMultipleSelected = selectedElements.length > 1;
     
-    // Get the types of all selected elements
-    const selectedTypes = hasMultipleSelected ? 
-      [...new Set(selectedElements.map(el => el.type))] : 
-      [selectedElement.type];
-    
-    // Check if all selected elements are of the same type
-    const allSameType = selectedTypes.length === 1;
-    
-    // If multiple elements are selected and they're all the same type, apply to all by default
-    if (hasMultipleSelected && allSameType && applyToAll) {
+    if (hasMultipleSelected && applyToAll) {
       // Update all selected elements with the new property
       selectedElements.forEach(element => {
         const elementUpdatedProps = {
@@ -480,70 +456,55 @@ const PropertiesPanel = () => {
     // Check if all selected elements are of the same type
     const allSameType = selectedTypes.length === 1;
     
-    // If multiple elements of different types are selected, show common properties
-    if (hasMultipleSelected && !allSameType) {
-      return (
-        <>
-          <PanelTitle>
-            Mixed Element Properties
-            <Badge>{selectedElements.length} selected</Badge>
-          </PanelTitle>
-          
-          <div style={{ marginBottom: '15px', color: '#666' }}>
-            <p>Multiple different element types selected. Only common properties can be edited.</p>
-          </div>
-          
-          {/* Common style properties that apply to most elements */}
-          <FormGroup isNarrow={isNarrow}>
-            <Label>Background Color</Label>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+    switch (selectedElement.type) {
+      case 'canvasSettings':
+        return (
+          <>
+            <PanelTitle>Canvas Settings</PanelTitle>
+            
+            <FormGroup>
+              <Label>Canvas Height</Label>
+              <Input
+                type="text"
+                value={properties.canvasHeight || 'auto'}
+                onChange={(e) => handlePropertyChange('canvasHeight', e.target.value)}
+                placeholder="auto, 800px, etc."
+              />
+              <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                Use 'auto' for dynamic height or specify a fixed height (e.g., '800px')
+              </small>
+            </FormGroup>
+            
+            <FormGroup>
+              <Label>Content Alignment</Label>
+              <select
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+                value={properties.contentAlignment || 'center'}
+                onChange={(e) => handlePropertyChange('contentAlignment', e.target.value)}
+              >
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+              </select>
+            </FormGroup>
+            
+            <FormGroup>
+              <Label>Background Color</Label>
               <ColorInput
                 type="color"
                 value={properties.backgroundColor || '#ffffff'}
-                onChange={(e) => handlePropertyChange('backgroundColor', e.target.value, true)}
+                onChange={(e) => handlePropertyChange('backgroundColor', e.target.value)}
               />
-            </div>
-          </FormGroup>
-          
-          <FormGroup isNarrow={isNarrow}>
-            <Label>Text Color</Label>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <ColorInput
-                type="color"
-                value={properties.color || '#000000'}
-                onChange={(e) => handlePropertyChange('color', e.target.value, true)}
-              />
-            </div>
-          </FormGroup>
-          
-          <FormGroup isNarrow={isNarrow}>
-            <Label>Border Radius</Label>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Input
-                type="text"
-                value={properties.borderRadius || '0px'}
-                onChange={(e) => handlePropertyChange('borderRadius', e.target.value, true)}
-                placeholder="e.g., 4px, 50%"
-              />
-            </div>
-          </FormGroup>
-          
-          <FormGroup isNarrow={isNarrow}>
-            <Label>Padding</Label>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Input
-                type="text"
-                value={properties.padding || '0px'}
-                onChange={(e) => handlePropertyChange('padding', e.target.value, true)}
-                placeholder="e.g., 10px, 10px 20px"
-              />
-            </div>
-          </FormGroup>
-        </>
-      );
-    }
-    
-    switch (selectedElement.type) {
+            </FormGroup>
+          </>
+        );
+      
       case 'text':
       case 'heading':
       case 'paragraph':
@@ -841,9 +802,9 @@ const PropertiesPanel = () => {
       style={{
         position: 'absolute',
         right: 0,
-        top: isMobile ? '50px' : 0,
-        height: isMobile ? 'calc(100% - 50px)' : '100%',
-        width: isMobile ? '100%' : (propertiesPanelWidth + 'px'),
+        top: 0,
+        height: '100%',
+        width: propertiesPanelWidth + 'px',
         zIndex: 100,
         boxShadow: '-2px 0 10px rgba(0,0,0,0.1)',
         display: 'flex',
@@ -851,36 +812,35 @@ const PropertiesPanel = () => {
       }}
     >
       {/* Resize handle */}
-      {!isMobile && (
-        <div
-          style={{
-            width: '10px',
-            height: '100%',
-            cursor: 'col-resize',
-            backgroundColor: 'transparent',
-            position: 'relative'
-          }}
-          onMouseDown={(e) => {
-            const startX = e.clientX;
-            const startWidth = propertiesPanelWidth;
-            
-            const handleMouseMove = (moveEvent) => {
-              const newWidth = startWidth - (moveEvent.clientX - startX);
-              // Allow for much smaller minimum width (50px) for better collapsibility
-              if (newWidth >= 50 && newWidth <= 500) {
-                setPropertiesPanelWidth(newWidth);
-              }
-            };
-            
-            const handleMouseUp = () => {
-              document.removeEventListener('mousemove', handleMouseMove);
-              document.removeEventListener('mouseup', handleMouseUp);
-            };
-            
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', handleMouseUp);
-          }}
-        >
+      <div
+        style={{
+          width: '10px',
+          height: '100%',
+          cursor: 'col-resize',
+          backgroundColor: 'transparent',
+          position: 'relative'
+        }}
+        onMouseDown={(e) => {
+          const startX = e.clientX;
+          const startWidth = propertiesPanelWidth;
+          
+          const handleMouseMove = (moveEvent) => {
+            const newWidth = startWidth - (moveEvent.clientX - startX);
+            // Allow for much smaller minimum width (50px) for better collapsibility
+            if (newWidth >= 50 && newWidth <= 500) {
+              setPropertiesPanelWidth(newWidth);
+            }
+          };
+          
+          const handleMouseUp = () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+          };
+          
+          document.addEventListener('mousemove', handleMouseMove);
+          document.addEventListener('mouseup', handleMouseUp);
+        }}
+      >
         <div 
           style={{
             position: 'absolute',
@@ -893,9 +853,8 @@ const PropertiesPanel = () => {
           }}
         />
       </div>
-      )}
       
-      <PanelContainer isNarrow={isMobile || propertiesPanelWidth < 200}>
+      <PanelContainer isNarrow={propertiesPanelWidth < 200}>
         <PanelTitle>
           Properties
           {selectedElements.length > 1 && (
@@ -912,46 +871,18 @@ const PropertiesPanel = () => {
               <FormGroup>
                 <Label>Content</Label>
                 {selectedElement.type === 'paragraph' ? (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Textarea
-                      value={selectedElement.content}
-                      onChange={handleContentChange}
-                      placeholder="Enter content"
-                    />
-                    {selectedElements.length > 1 && selectedElements.every(el => el.type === selectedElement.type) && (
-                      <ApplyButton 
-                        onClick={() => {
-                          // Apply content change to all selected elements
-                          selectedElements.forEach(element => {
-                            updateElement(element.id, { content: selectedElement.content });
-                          });
-                        }}
-                      >
-                        Apply Content to All Selected
-                      </ApplyButton>
-                    )}
-                  </div>
+                  <Textarea
+                    value={selectedElement.content}
+                    onChange={handleContentChange}
+                    placeholder="Enter content"
+                  />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Input
-                      type={selectedElement.type === 'image' ? 'url' : 'text'}
-                      value={selectedElement.content}
-                      onChange={handleContentChange}
-                      placeholder={selectedElement.type === 'image' ? 'Image URL' : 'Enter content'}
-                    />
-                    {selectedElements.length > 1 && selectedElements.every(el => el.type === selectedElement.type) && (
-                      <ApplyButton 
-                        onClick={() => {
-                          // Apply content change to all selected elements
-                          selectedElements.forEach(element => {
-                            updateElement(element.id, { content: selectedElement.content });
-                          });
-                        }}
-                      >
-                        Apply Content to All Selected
-                      </ApplyButton>
-                    )}
-                  </div>
+                  <Input
+                    type={selectedElement.type === 'image' ? 'url' : 'text'}
+                    value={selectedElement.content}
+                    onChange={handleContentChange}
+                    placeholder={selectedElement.type === 'image' ? 'Image URL' : 'Enter content'}
+                  />
                 )}
               </FormGroup>
             )}

@@ -157,9 +157,26 @@ const TemplateSelector = ({ isOpen, onClose }) => {
   
   const handleApplyTemplate = () => {
     if (selectedTemplate) {
-      // Apply the selected template but don't overwrite existing elements
-      // Instead, add template elements to the canvas
-      setElements(selectedTemplate.elements);
+      // Process elements to ensure all text elements have proper resize properties
+      const processedElements = selectedTemplate.elements.map(element => {
+        // Clone the element to avoid modifying the original
+        const processedElement = { ...element };
+        
+        // Ensure text-based elements have proper width and height properties
+        if (['text', 'heading', 'paragraph'].includes(element.type)) {
+          processedElement.properties = {
+            ...processedElement.properties,
+            width: processedElement.properties.width || 
+                  (element.type === 'text' ? '200px' : '300px'),
+            height: processedElement.properties.height || 'auto',
+          };
+        }
+        
+        return processedElement;
+      });
+      
+      // Apply the processed template elements to the canvas
+      setElements(processedElements);
       onClose();
     }
   };

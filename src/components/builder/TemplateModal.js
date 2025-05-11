@@ -240,7 +240,25 @@ const TemplateModal = ({ isOpen, onClose }) => {
     const template = loadTemplateById(templateId);
     
     if (template && template.elements) {
-      setElements(template.elements);
+      // Process elements to ensure all text elements have proper resize properties
+      const processedElements = template.elements.map(element => {
+        // Clone the element to avoid modifying the original
+        const processedElement = { ...element };
+        
+        // Ensure text-based elements have proper width and height properties
+        if (['text', 'heading', 'paragraph'].includes(element.type)) {
+          processedElement.properties = {
+            ...processedElement.properties,
+            width: processedElement.properties.width || 
+                  (element.type === 'text' ? '200px' : '300px'),
+            height: processedElement.properties.height || 'auto',
+          };
+        }
+        
+        return processedElement;
+      });
+      
+      setElements(processedElements);
       onClose();
     } else {
       alert('Error loading template');

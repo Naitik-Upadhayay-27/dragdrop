@@ -7,9 +7,9 @@ const DropZoneContainer = styled.div`
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%) ${props => props.isActive ? 'scale(1.2)' : 'scale(1)'};
-  width: 200px;
+  width: 60px;
   height: 60px;
-  border-radius: 8px;
+  border-radius: 50%;
   background-color: ${props => props.isActive ? '#f44336' : 'rgba(0, 0, 0, 0.7)'};
   display: flex;
   align-items: center;
@@ -18,12 +18,10 @@ const DropZoneContainer = styled.div`
   transition: all 0.3s ease;
   z-index: 100; /* Lower z-index so elements can be dropped on it */
   color: white;
-  font-size: 16px;
-  border: 2px dashed ${props => props.isActive ? 'white' : 'rgba(255, 255, 255, 0.5)'};
   
   &:hover {
     background-color: #f44336;
-    border-color: white;
+    transform: translateX(-50%) scale(1.1);
   }
   
   ${props => props.isActive && `
@@ -32,10 +30,9 @@ const DropZoneContainer = styled.div`
 `;
 
 const TrashIcon = styled.div`
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   color: white;
-  margin-right: 8px;
   
   svg {
     width: 100%;
@@ -145,7 +142,6 @@ const DeleteDropZone = () => {
           <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
         </svg>
       </TrashIcon>
-      <DropZoneText>{isActive ? 'Release to Delete' : 'Drop Here to Delete'}</DropZoneText>
     </DropZoneContainer>
   );
 };

@@ -133,7 +133,8 @@ export const businessTemplate = {
         color: '#e74c3c',
         fontWeight: 'bold',
         marginBottom: '10px',
-        letterSpacing: '1px'
+        letterSpacing: '1px',
+        display: 'block'
       }
     },
     {
@@ -143,11 +144,14 @@ export const businessTemplate = {
       position: { x: 20, y: 580 },
       properties: {
         fontSize: '28px',
-        color: '#111111',
+        color: '#333333',
         fontWeight: 'bold',
-        marginBottom: '15px',
-        maxWidth: '800px',
-        lineHeight: '1.3'
+        lineHeight: '1.3',
+        marginBottom: '10px',
+        fontFamily: 'Arial, sans-serif',
+        width: '800px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -158,7 +162,10 @@ export const businessTemplate = {
       properties: {
         fontSize: '14px',
         color: '#666666',
-        marginBottom: '20px'
+        marginBottom: '20px',
+        width: '300px',
+        height: 'auto',
+        display: 'block'
       }
     },
     // Trending Topics Section
@@ -174,7 +181,9 @@ export const businessTemplate = {
         marginBottom: '20px',
         borderBottom: '2px solid #e74c3c',
         paddingBottom: '10px',
-        width: '200px'
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     // First Article Card
@@ -311,11 +320,14 @@ export const businessTemplate = {
       content: '',
       position: { x: 0, y: 1300 },
       properties: {
-        width: '100%',
+        width: '1280px', // Fixed width to match canvas width
         height: '300px',
         backgroundColor: '#111111',
         padding: '40px 0',
-        display: 'block'
+        display: 'block',
+        left: '0',
+        right: '0',
+        boxSizing: 'border-box'
       }
     },
     {
@@ -329,7 +341,10 @@ export const businessTemplate = {
         fontWeight: 'bold',
         marginBottom: '20px',
         fontFamily: 'Arial, sans-serif',
-        letterSpacing: '1px'
+        letterSpacing: '1px',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -342,67 +357,84 @@ export const businessTemplate = {
         color: '#e0e0e0',
         lineHeight: '1.6',
         marginBottom: '30px',
-        maxWidth: '350px'
+        width: '350px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
       id: 'footer-heading-links',
       type: 'heading',
       content: 'Quick Links',
-      position: { x: 400, y: 1320 },
+      position: { x: 300, y: 1320 },
       properties: {
         fontSize: '18px',
         color: '#ffffff',
         fontWeight: 'bold',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
       id: 'footer-link-1',
       type: 'text',
       content: 'About Us',
-      position: { x: 400, y: 1360 },
+      position: { x: 300, y: 1360 },
       properties: {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
       id: 'footer-link-2',
       type: 'text',
       content: 'Contact',
-      position: { x: 400, y: 1385 },
+      position: { x: 300, y: 1385 },
       properties: {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
       id: 'footer-link-3',
       type: 'text',
       content: 'Privacy Policy',
-      position: { x: 400, y: 1410 },
+      position: { x: 300, y: 1410 },
       properties: {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
       id: 'footer-link-4',
       type: 'text',
       content: 'Terms of Service',
-      position: { x: 400, y: 1435 },
+      position: { x: 300, y: 1435 },
       properties: {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -414,7 +446,10 @@ export const businessTemplate = {
         fontSize: '18px',
         color: '#ffffff',
         fontWeight: 'bold',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -426,7 +461,10 @@ export const businessTemplate = {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -438,7 +476,10 @@ export const businessTemplate = {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -450,7 +491,10 @@ export const businessTemplate = {
         fontSize: '14px',
         color: '#e0e0e0',
         marginBottom: '10px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -767,7 +811,7 @@ export const ecommerceTemplate = {
         color: '#2c3e50',
         fontWeight: 'bold',
         textAlign: 'center',
-        width: '100%',
+        width: '800px',
         marginBottom: '10px'
       }
     },
@@ -781,7 +825,8 @@ export const ecommerceTemplate = {
         color: '#7f8c8d',
         fontWeight: 'normal',
         textAlign: 'center',
-        width: '100%',
+        width: '800px',
+        height: 'auto',
         marginBottom: '40px'
       }
     },
@@ -937,7 +982,9 @@ export const landingPageTemplate = {
         color: '#2c3e50',
         fontWeight: 'bold',
         textAlign: 'center',
-        width: '100%',
+        width: '800px',
+        height: 'auto',
+        display: 'block',
         marginBottom: '20px'
       }
     },
@@ -948,11 +995,12 @@ export const landingPageTemplate = {
       position: { x: 20, y: 90 },
       properties: {
         fontSize: '18px',
-        color: '#34495e',
+        color: '#7f8c8d',
         lineHeight: '1.6',
         textAlign: 'center',
-        width: '100%',
-        maxWidth: '700px',
+        width: '800px',
+        height: 'auto',
+        display: 'block',
         marginBottom: '30px'
       }
     },
@@ -1010,7 +1058,10 @@ export const landingPageTemplate = {
         fontSize: '18px',
         color: '#2c3e50',
         fontWeight: 'bold',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -1022,7 +1073,10 @@ export const landingPageTemplate = {
         fontSize: '18px',
         color: '#2c3e50',
         fontWeight: 'bold',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -1034,7 +1088,10 @@ export const landingPageTemplate = {
         fontSize: '18px',
         color: '#2c3e50',
         fontWeight: 'bold',
-        marginBottom: '15px'
+        marginBottom: '15px',
+        width: '200px',
+        height: 'auto',
+        display: 'block'
       }
     },
     {
@@ -1055,11 +1112,448 @@ export const landingPageTemplate = {
   ]
 };
 
+// Paralbag e-commerce template inspired by the Parallax BigCommerce Bag Store Theme
+export const paralbagTemplate = {
+  name: 'Paralbag Store',
+  description: 'A premium bag store template with parallax effects, inspired by the Paralbag BigCommerce theme.',
+  elements: [
+    // Background element
+    {
+      id: 'background-main',
+      type: 'background',
+      content: '',
+      position: { x: 0, y: 0 },
+      properties: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#ffffff',
+        backgroundImage: '',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        zIndex: '-1',
+        opacity: '1',
+        blur: '0px',
+        grayscale: '0%',
+        sepia: '0%',
+        hueRotate: '0deg',
+        contrast: '100%',
+        brightness: '100%'
+      }
+    },
+    // Header navigation
+    {
+      id: 'header-nav',
+      type: 'text',
+      content: 'HOME    SHOP    COLLECTIONS    ABOUT    CONTACT',
+      position: { x: 0, y: 20 },
+      properties: {
+        fontSize: '14px',
+        color: '#333333',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        width: '100%',
+        letterSpacing: '2px',
+        padding: '15px 0',
+        borderBottom: '1px solid #eaeaea'
+      }
+    },
+    // Logo
+    {
+      id: 'logo-text',
+      type: 'heading',
+      content: 'PARALBAG',
+      position: { x: 0, y: 80 },
+      properties: {
+        fontSize: '36px',
+        color: '#222222',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        width: '100%',
+        letterSpacing: '4px',
+        marginBottom: '5px'
+      }
+    },
+    {
+      id: 'logo-tagline',
+      type: 'text',
+      content: 'PREMIUM BAG COLLECTION',
+      position: { x: 0, y: 130 },
+      properties: {
+        fontSize: '14px',
+        color: '#777777',
+        fontWeight: 'normal',
+        textAlign: 'center',
+        width: '100%',
+        letterSpacing: '3px',
+        marginBottom: '30px'
+      }
+    },
+    // Hero image with parallax effect
+    {
+      id: 'hero-image',
+      type: 'image',
+      content: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80',
+      position: { x: 0, y: 180 },
+      properties: {
+        width: '100%',
+        height: '500px',
+        objectFit: 'cover',
+        marginBottom: '0px',
+        alt: 'Premium Leather Bags'
+      }
+    },
+    // Hero overlay text
+    {
+      id: 'hero-overlay-heading',
+      type: 'heading',
+      content: 'LUXURY BAGS',
+      position: { x: 50, y: 300 },
+      properties: {
+        fontSize: '48px',
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textShadow: '2px 2px 8px rgba(0,0,0,0.5)',
+        letterSpacing: '5px',
+        zIndex: '2'
+      }
+    },
+    {
+      id: 'hero-overlay-text',
+      type: 'text',
+      content: 'HANDCRAFTED WITH PREMIUM LEATHER',
+      position: { x: 50, y: 370 },
+      properties: {
+        fontSize: '16px',
+        color: '#ffffff',
+        fontWeight: 'normal',
+        textShadow: '1px 1px 4px rgba(0,0,0,0.5)',
+        letterSpacing: '3px',
+        zIndex: '2'
+      }
+    },
+    {
+      id: 'hero-button',
+      type: 'button',
+      content: 'SHOP NOW',
+      position: { x: 50, y: 420 },
+      properties: {
+        backgroundColor: '#ffffff',
+        color: '#222222',
+        padding: '12px 30px',
+        borderRadius: '0px',
+        fontWeight: 'bold',
+        border: 'none',
+        cursor: 'pointer',
+        letterSpacing: '2px',
+        fontSize: '14px',
+        zIndex: '2'
+      }
+    },
+    // Featured categories section
+    {
+      id: 'featured-heading',
+      type: 'heading',
+      content: 'FEATURED CATEGORIES',
+      position: { x: 0, y: 720 },
+      properties: {
+        fontSize: '24px',
+        color: '#222222',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        width: '100%',
+        letterSpacing: '3px',
+        marginBottom: '40px',
+        marginTop: '40px'
+      }
+    },
+    // Category 1
+    {
+      id: 'category-image-1',
+      type: 'image',
+      content: 'https://images.unsplash.com/photo-1559563458-527698bf5295?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
+      position: { x: 50, y: 800 },
+      properties: {
+        width: '300px',
+        height: '300px',
+        objectFit: 'cover',
+        borderRadius: '0px',
+        marginRight: '30px',
+        marginBottom: '15px',
+        alt: 'Tote Bags'
+      }
+    },
+    {
+      id: 'category-name-1',
+      type: 'text',
+      content: 'TOTE BAGS',
+      position: { x: 50, y: 1110 },
+      properties: {
+        fontSize: '18px',
+        color: '#222222',
+        fontWeight: 'bold',
+        letterSpacing: '2px',
+        marginBottom: '5px'
+      }
+    },
+    {
+      id: 'category-price-1',
+      type: 'text',
+      content: 'FROM $99',
+      position: { x: 50, y: 1140 },
+      properties: {
+        fontSize: '14px',
+        color: '#777777',
+        fontWeight: 'normal',
+        marginBottom: '10px'
+      }
+    },
+    // Category 2
+    {
+      id: 'category-image-2',
+      type: 'image',
+      content: 'https://images.unsplash.com/photo-1548863227-3af567fc3b27?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
+      position: { x: 380, y: 800 },
+      properties: {
+        width: '300px',
+        height: '300px',
+        objectFit: 'cover',
+        borderRadius: '0px',
+        marginRight: '30px',
+        marginBottom: '15px',
+        alt: 'Crossbody Bags'
+      }
+    },
+    {
+      id: 'category-name-2',
+      type: 'text',
+      content: 'CROSSBODY BAGS',
+      position: { x: 380, y: 1110 },
+      properties: {
+        fontSize: '18px',
+        color: '#222222',
+        fontWeight: 'bold',
+        letterSpacing: '2px',
+        marginBottom: '5px'
+      }
+    },
+    {
+      id: 'category-price-2',
+      type: 'text',
+      content: 'FROM $79',
+      position: { x: 380, y: 1140 },
+      properties: {
+        fontSize: '14px',
+        color: '#777777',
+        fontWeight: 'normal',
+        marginBottom: '10px'
+      }
+    },
+    // Category 3
+    {
+      id: 'category-image-3',
+      type: 'image',
+      content: 'https://images.unsplash.com/photo-1575891611210-0bfbe9a2a665?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400&q=80',
+      position: { x: 710, y: 800 },
+      properties: {
+        width: '300px',
+        height: '300px',
+        objectFit: 'cover',
+        borderRadius: '0px',
+        marginBottom: '15px',
+        alt: 'Backpacks'
+      }
+    },
+    {
+      id: 'category-name-3',
+      type: 'text',
+      content: 'BACKPACKS',
+      position: { x: 710, y: 1110 },
+      properties: {
+        fontSize: '18px',
+        color: '#222222',
+        fontWeight: 'bold',
+        letterSpacing: '2px',
+        marginBottom: '5px'
+      }
+    },
+    {
+      id: 'category-price-3',
+      type: 'text',
+      content: 'FROM $129',
+      position: { x: 710, y: 1140 },
+      properties: {
+        fontSize: '14px',
+        color: '#777777',
+        fontWeight: 'normal',
+        marginBottom: '10px'
+      }
+    },
+    // Featured product section
+    {
+      id: 'featured-product-heading',
+      type: 'heading',
+      content: 'FEATURED PRODUCT',
+      position: { x: 0, y: 1220 },
+      properties: {
+        fontSize: '24px',
+        color: '#222222',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        width: '100%',
+        letterSpacing: '3px',
+        marginBottom: '40px',
+        marginTop: '40px'
+      }
+    },
+    {
+      id: 'featured-product-image',
+      type: 'image',
+      content: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&q=80',
+      position: { x: 50, y: 1300 },
+      properties: {
+        width: '500px',
+        height: '400px',
+        objectFit: 'cover',
+        borderRadius: '0px',
+        marginRight: '50px',
+        marginBottom: '30px',
+        alt: 'Premium Leather Tote'
+      }
+    },
+    {
+      id: 'featured-product-name',
+      type: 'heading',
+      content: 'PREMIUM LEATHER TOTE',
+      position: { x: 600, y: 1320 },
+      properties: {
+        fontSize: '24px',
+        color: '#222222',
+        fontWeight: 'bold',
+        letterSpacing: '2px',
+        marginBottom: '20px'
+      }
+    },
+    {
+      id: 'featured-product-price',
+      type: 'text',
+      content: '$149.99',
+      position: { x: 600, y: 1370 },
+      properties: {
+        fontSize: '20px',
+        color: '#222222',
+        fontWeight: 'bold',
+        marginBottom: '20px'
+      }
+    },
+    {
+      id: 'featured-product-description',
+      type: 'paragraph',
+      content: 'Handcrafted with premium full-grain leather, this tote bag combines elegance with functionality. Perfect for everyday use with ample space for all your essentials. Features durable stitching and a magnetic closure.',
+      position: { x: 600, y: 1410 },
+      properties: {
+        fontSize: '14px',
+        color: '#555555',
+        lineHeight: '1.6',
+        width: '400px',
+        marginBottom: '30px'
+      }
+    },
+    {
+      id: 'featured-product-button',
+      type: 'button',
+      content: 'ADD TO CART',
+      position: { x: 600, y: 1530 },
+      properties: {
+        backgroundColor: '#222222',
+        color: '#ffffff',
+        padding: '12px 30px',
+        borderRadius: '0px',
+        fontWeight: 'bold',
+        border: 'none',
+        cursor: 'pointer',
+        letterSpacing: '2px',
+        fontSize: '14px'
+      }
+    },
+    // Newsletter section
+    {
+      id: 'newsletter-heading',
+      type: 'heading',
+      content: 'SUBSCRIBE TO OUR NEWSLETTER',
+      position: { x: 0, y: 1750 },
+      properties: {
+        fontSize: '24px',
+        color: '#222222',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        width: '100%',
+        letterSpacing: '3px',
+        marginBottom: '20px',
+        marginTop: '40px'
+      }
+    },
+    {
+      id: 'newsletter-text',
+      type: 'text',
+      content: 'Stay updated with our latest collections and exclusive offers',
+      position: { x: 0, y: 1800 },
+      properties: {
+        fontSize: '16px',
+        color: '#555555',
+        fontWeight: 'normal',
+        textAlign: 'center',
+        width: '100%',
+        marginBottom: '30px'
+      }
+    },
+    {
+      id: 'newsletter-button',
+      type: 'button',
+      content: 'SUBSCRIBE',
+      position: { x: 0, y: 1850 },
+      properties: {
+        backgroundColor: '#222222',
+        color: '#ffffff',
+        padding: '12px 30px',
+        borderRadius: '0px',
+        fontWeight: 'bold',
+        border: 'none',
+        cursor: 'pointer',
+        letterSpacing: '2px',
+        fontSize: '14px',
+        textAlign: 'center',
+        width: '200px',
+        display: 'block',
+        margin: '0 auto'
+      }
+    },
+    // Footer
+    {
+      id: 'footer-text',
+      type: 'text',
+      content: '© 2025 PARALBAG. All Rights Reserved.',
+      position: { x: 0, y: 1950 },
+      properties: {
+        fontSize: '14px',
+        color: '#777777',
+        fontWeight: 'normal',
+        textAlign: 'center',
+        width: '100%',
+        padding: '20px 0',
+        borderTop: '1px solid #eaeaea',
+        marginTop: '50px'
+      }
+    }
+  ]
+};
+
 // Collection of all built-in templates
 export const builtInTemplates = [
   businessTemplate,
   portfolioTemplate,
   blogTemplate,
   ecommerceTemplate,
+  paralbagTemplate,
   landingPageTemplate
 ];
